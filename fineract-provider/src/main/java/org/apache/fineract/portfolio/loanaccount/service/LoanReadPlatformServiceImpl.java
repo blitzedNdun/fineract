@@ -384,6 +384,14 @@ public class LoanReadPlatformServiceImpl implements LoanReadPlatformService, Loa
                 arrayPos = arrayPos + 1;
             }
 
+            if (searchParameters.getSecured() != null) {
+                if (Boolean.TRUE.equals(searchParameters.getSecured())) {
+                    sqlBuilder.append(" and EXISTS (SELECT 1 FROM m_loan_collateral mlc WHERE mlc.loan_id = l.id)");
+                } else {
+                    sqlBuilder.append(" and NOT EXISTS (SELECT 1 FROM m_loan_collateral mlc WHERE mlc.loan_id = l.id)");
+                }
+            }
+
             if (searchParameters.hasOrderBy()) {
                 sqlBuilder.append(" order by ").append(searchParameters.getOrderBy());
                 this.columnValidator.validateSqlInjection(sqlBuilder.toString(), searchParameters.getOrderBy());
