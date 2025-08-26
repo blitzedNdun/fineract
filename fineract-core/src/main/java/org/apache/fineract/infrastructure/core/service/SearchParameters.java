@@ -142,7 +142,7 @@ public class SearchParameters {
     public boolean hasLegalForm() {
         return this.legalForm != null;
     }
-    
+
     public Boolean getSecured() {
         return this.secured;
     }
