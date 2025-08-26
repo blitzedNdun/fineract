@@ -501,7 +501,8 @@ public class LoansApiResource {
         sqlValidator.validate(accountNo);
         sqlValidator.validate(externalId);
         final SearchParameters searchParameters = SearchParameters.builder().accountNo(accountNo).sortOrder(sortOrder)
-                .externalId(externalId).offset(offset).limit(limit).orderBy(orderBy).status(status).clientId(clientId).secured(secured).build();
+                .externalId(externalId).offset(offset).limit(limit).orderBy(orderBy).status(status).clientId(clientId).secured(secured)
+                .build();
 
         final Page<LoanAccountData> loanBasicDetails = this.loanReadPlatformService.retrieveAll(searchParameters);
         final Set<String> associationParameters = ApiParameterHelper.extractAssociationsForResponseIfProvided(uriInfo.getQueryParameters());
