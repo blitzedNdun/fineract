@@ -298,51 +298,35 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
 
             // Create Loan Product
             PostLoanProductsRequest product = createOnePeriod30DaysLongNoInterestPeriodicAccrualProduct()
-                    .numberOfRepayments(numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .installmentAmountInMultiplesOf(null)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS.longValue())
-                    .interestType(InterestType.DECLINING_BALANCE)
-                    .interestRatePerPeriod(10.0)
-                    .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY)
+                    .numberOfRepayments(numberOfRepayments).repaymentEvery(repaymentEvery).installmentAmountInMultiplesOf(null)
+                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS.longValue()).interestType(InterestType.DECLINING_BALANCE)
+                    .interestRatePerPeriod(10.0).interestCalculationPeriodType(InterestCalculationPeriodType.DAILY)
                     .interestRecalculationCompoundingMethod(InterestRecalculationCompoundingMethod.NONE)
-                    .rescheduleStrategyMethod(RescheduleStrategyMethod.ADJUST_LAST_UNPAID_PERIOD)
-                    .isInterestRecalculationEnabled(true)
-                    .recalculationRestFrequencyInterval(1)
-                    .recalculationRestFrequencyType(RecalculationRestFrequencyType.DAILY)
-                    .rescheduleStrategyMethod(RescheduleStrategyMethod.REDUCE_EMI_AMOUNT)
-                    .allowPartialPeriodInterestCalcualtion(false)
-                    .disallowExpectedDisbursements(false)
-                    .allowApprovedDisbursedAmountsOverApplied(false)
-                    .overAppliedNumber(null)
-                    .overAppliedCalculationType(null)
-                    .multiDisburseLoan(null);
+                    .rescheduleStrategyMethod(RescheduleStrategyMethod.ADJUST_LAST_UNPAID_PERIOD).isInterestRecalculationEnabled(true)
+                    .recalculationRestFrequencyInterval(1).recalculationRestFrequencyType(RecalculationRestFrequencyType.DAILY)
+                    .rescheduleStrategyMethod(RescheduleStrategyMethod.REDUCE_EMI_AMOUNT).allowPartialPeriodInterestCalcualtion(false)
+                    .disallowExpectedDisbursements(false).allowApprovedDisbursedAmountsOverApplied(false).overAppliedNumber(null)
+                    .overAppliedCalculationType(null).multiDisburseLoan(null);
 
             PostLoanProductsResponse loanProductResponse = loanProductHelper.createLoanProduct(product);
             Long loanProductId = loanProductResponse.getResourceId();
 
             // Create Collateral Product and associate with secured client
             Integer collateralProductId = CollateralManagementHelper.createCollateralProduct(requestSpec, responseSpec);
-            Integer clientCollateralId = CollateralManagementHelper.createClientCollateral(requestSpec, responseSpec, 
-                securedClientId.toString(), collateralProductId);
+            Integer clientCollateralId = CollateralManagementHelper.createClientCollateral(requestSpec, responseSpec,
+                    securedClientId.toString(), collateralProductId);
 
             // Apply and Approve Loans
-            PostLoansRequest securedLoanApplication = applyLoanRequest(securedClientId, loanProductId, "01 January 2023", amount, numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .interestRatePerPeriod(BigDecimal.valueOf(10.0))
-                    .loanTermFrequency(numberOfRepayments)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .interestType(InterestType.DECLINING_BALANCE)
+            PostLoansRequest securedLoanApplication = applyLoanRequest(securedClientId, loanProductId, "01 January 2023", amount,
+                    numberOfRepayments).repaymentEvery(repaymentEvery).interestRatePerPeriod(BigDecimal.valueOf(10.0))
+                    .loanTermFrequency(numberOfRepayments).repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
+                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS).interestType(InterestType.DECLINING_BALANCE)
                     .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY);
 
-            PostLoansRequest unsecuredLoanApplication = applyLoanRequest(unsecuredClientId, loanProductId, "01 January 2023", amount, numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .interestRatePerPeriod(BigDecimal.valueOf(10.0))
-                    .loanTermFrequency(numberOfRepayments)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .interestType(InterestType.DECLINING_BALANCE)
+            PostLoansRequest unsecuredLoanApplication = applyLoanRequest(unsecuredClientId, loanProductId, "01 January 2023", amount,
+                    numberOfRepayments).repaymentEvery(repaymentEvery).interestRatePerPeriod(BigDecimal.valueOf(10.0))
+                    .loanTermFrequency(numberOfRepayments).repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
+                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS).interestType(InterestType.DECLINING_BALANCE)
                     .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY);
 
             PostLoansResponse securedLoanResponse = loanTransactionHelper.applyLoan(securedLoanApplication);
@@ -362,7 +346,8 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
             // This creates a record in m_loan_collateral table
             String loanCollateralUrl = "/fineract-provider/api/v1/loans/" + securedLoanIdValue + "/collaterals";
             String loanCollateralJson = CollateralManagementHelper.clientCollateralAsJson(clientCollateralId, BigDecimal.valueOf(100));
-            Utils.performServerPost(requestSpec, responseSpec, loanCollateralUrl + "?" + Utils.TENANT_IDENTIFIER, loanCollateralJson, "resourceId");
+            Utils.performServerPost(requestSpec, responseSpec, loanCollateralUrl + "?" + Utils.TENANT_IDENTIFIER, loanCollateralJson,
+                    "resourceId");
 
             // Disburse both loans
             disburseLoan(securedLoanIdValue, BigDecimal.valueOf(amount), "01 January 2023");
@@ -373,14 +358,14 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
             // Test secured=true filter - should return only loans with collateral
             String loansUrl = "/fineract-provider/api/v1/loans?secured=true&" + Utils.TENANT_IDENTIFIER;
             String jsonResponse = Utils.performServerGet(requestSpec, responseSpec, loansUrl, "");
-            
+
             // Parse response to verify only secured loan is returned
             Gson gson = new Gson();
             GetLoansResponse securedLoansResponse = gson.fromJson(jsonResponse, GetLoansResponse.class);
-            
+
             assertThat(securedLoansResponse.getPageItems()).isNotNull();
             assertThat(securedLoansResponse.getPageItems()).hasSize(1);
-            
+
             Long returnedLoanId = securedLoansResponse.getPageItems().iterator().next().getId();
             assertThat(returnedLoanId).isEqualTo(securedLoanId.get());
         });
@@ -402,51 +387,35 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
 
             // Create Loan Product
             PostLoanProductsRequest product = createOnePeriod30DaysLongNoInterestPeriodicAccrualProduct()
-                    .numberOfRepayments(numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .installmentAmountInMultiplesOf(null)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS.longValue())
-                    .interestType(InterestType.DECLINING_BALANCE)
-                    .interestRatePerPeriod(10.0)
-                    .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY)
+                    .numberOfRepayments(numberOfRepayments).repaymentEvery(repaymentEvery).installmentAmountInMultiplesOf(null)
+                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS.longValue()).interestType(InterestType.DECLINING_BALANCE)
+                    .interestRatePerPeriod(10.0).interestCalculationPeriodType(InterestCalculationPeriodType.DAILY)
                     .interestRecalculationCompoundingMethod(InterestRecalculationCompoundingMethod.NONE)
-                    .rescheduleStrategyMethod(RescheduleStrategyMethod.ADJUST_LAST_UNPAID_PERIOD)
-                    .isInterestRecalculationEnabled(true)
-                    .recalculationRestFrequencyInterval(1)
-                    .recalculationRestFrequencyType(RecalculationRestFrequencyType.DAILY)
-                    .rescheduleStrategyMethod(RescheduleStrategyMethod.REDUCE_EMI_AMOUNT)
-                    .allowPartialPeriodInterestCalcualtion(false)
-                    .disallowExpectedDisbursements(false)
-                    .allowApprovedDisbursedAmountsOverApplied(false)
-                    .overAppliedNumber(null)
-                    .overAppliedCalculationType(null)
-                    .multiDisburseLoan(null);
+                    .rescheduleStrategyMethod(RescheduleStrategyMethod.ADJUST_LAST_UNPAID_PERIOD).isInterestRecalculationEnabled(true)
+                    .recalculationRestFrequencyInterval(1).recalculationRestFrequencyType(RecalculationRestFrequencyType.DAILY)
+                    .rescheduleStrategyMethod(RescheduleStrategyMethod.REDUCE_EMI_AMOUNT).allowPartialPeriodInterestCalcualtion(false)
+                    .disallowExpectedDisbursements(false).allowApprovedDisbursedAmountsOverApplied(false).overAppliedNumber(null)
+                    .overAppliedCalculationType(null).multiDisburseLoan(null);
 
             PostLoanProductsResponse loanProductResponse = loanProductHelper.createLoanProduct(product);
             Long loanProductId = loanProductResponse.getResourceId();
 
             // Create Collateral Product and associate with secured client
             Integer collateralProductId = CollateralManagementHelper.createCollateralProduct(requestSpec, responseSpec);
-            Integer clientCollateralId = CollateralManagementHelper.createClientCollateral(requestSpec, responseSpec, 
-                securedClientId.toString(), collateralProductId);
+            Integer clientCollateralId = CollateralManagementHelper.createClientCollateral(requestSpec, responseSpec,
+                    securedClientId.toString(), collateralProductId);
 
             // Apply and Approve Loans
-            PostLoansRequest securedLoanApplication = applyLoanRequest(securedClientId, loanProductId, "01 January 2023", amount, numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .interestRatePerPeriod(BigDecimal.valueOf(10.0))
-                    .loanTermFrequency(numberOfRepayments)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .interestType(InterestType.DECLINING_BALANCE)
+            PostLoansRequest securedLoanApplication = applyLoanRequest(securedClientId, loanProductId, "01 January 2023", amount,
+                    numberOfRepayments).repaymentEvery(repaymentEvery).interestRatePerPeriod(BigDecimal.valueOf(10.0))
+                    .loanTermFrequency(numberOfRepayments).repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
+                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS).interestType(InterestType.DECLINING_BALANCE)
                     .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY);
 
-            PostLoansRequest unsecuredLoanApplication = applyLoanRequest(unsecuredClientId, loanProductId, "01 January 2023", amount, numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .interestRatePerPeriod(BigDecimal.valueOf(10.0))
-                    .loanTermFrequency(numberOfRepayments)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .interestType(InterestType.DECLINING_BALANCE)
+            PostLoansRequest unsecuredLoanApplication = applyLoanRequest(unsecuredClientId, loanProductId, "01 January 2023", amount,
+                    numberOfRepayments).repaymentEvery(repaymentEvery).interestRatePerPeriod(BigDecimal.valueOf(10.0))
+                    .loanTermFrequency(numberOfRepayments).repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
+                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS).interestType(InterestType.DECLINING_BALANCE)
                     .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY);
 
             PostLoansResponse securedLoanResponse = loanTransactionHelper.applyLoan(securedLoanApplication);
@@ -466,7 +435,8 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
             // This creates a record in m_loan_collateral table for the secured loan
             String loanCollateralUrl = "/fineract-provider/api/v1/loans/" + securedLoanIdValue + "/collaterals";
             String loanCollateralJson = CollateralManagementHelper.clientCollateralAsJson(clientCollateralId, BigDecimal.valueOf(100));
-            Utils.performServerPost(requestSpec, responseSpec, loanCollateralUrl + "?" + Utils.TENANT_IDENTIFIER, loanCollateralJson, "resourceId");
+            Utils.performServerPost(requestSpec, responseSpec, loanCollateralUrl + "?" + Utils.TENANT_IDENTIFIER, loanCollateralJson,
+                    "resourceId");
 
             // Disburse both loans
             disburseLoan(securedLoanIdValue, BigDecimal.valueOf(amount), "01 January 2023");
@@ -477,14 +447,14 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
             // Test secured=false filter - should return only loans without collateral
             String loansUrl = "/fineract-provider/api/v1/loans?secured=false&" + Utils.TENANT_IDENTIFIER;
             String jsonResponse = Utils.performServerGet(requestSpec, responseSpec, loansUrl, "");
-            
+
             // Parse response to verify only unsecured loan is returned
             Gson gson = new Gson();
             GetLoansResponse unsecuredLoansResponse = gson.fromJson(jsonResponse, GetLoansResponse.class);
-            
+
             assertThat(unsecuredLoansResponse.getPageItems()).isNotNull();
             assertThat(unsecuredLoansResponse.getPageItems()).hasSize(1);
-            
+
             Long returnedLoanId = unsecuredLoansResponse.getPageItems().iterator().next().getId();
             assertThat(returnedLoanId).isEqualTo(unsecuredLoanId.get());
         });
@@ -506,51 +476,35 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
 
             // Create Loan Product
             PostLoanProductsRequest product = createOnePeriod30DaysLongNoInterestPeriodicAccrualProduct()
-                    .numberOfRepayments(numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .installmentAmountInMultiplesOf(null)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS.longValue())
-                    .interestType(InterestType.DECLINING_BALANCE)
-                    .interestRatePerPeriod(10.0)
-                    .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY)
+                    .numberOfRepayments(numberOfRepayments).repaymentEvery(repaymentEvery).installmentAmountInMultiplesOf(null)
+                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS.longValue()).interestType(InterestType.DECLINING_BALANCE)
+                    .interestRatePerPeriod(10.0).interestCalculationPeriodType(InterestCalculationPeriodType.DAILY)
                     .interestRecalculationCompoundingMethod(InterestRecalculationCompoundingMethod.NONE)
-                    .rescheduleStrategyMethod(RescheduleStrategyMethod.ADJUST_LAST_UNPAID_PERIOD)
-                    .isInterestRecalculationEnabled(true)
-                    .recalculationRestFrequencyInterval(1)
-                    .recalculationRestFrequencyType(RecalculationRestFrequencyType.DAILY)
-                    .rescheduleStrategyMethod(RescheduleStrategyMethod.REDUCE_EMI_AMOUNT)
-                    .allowPartialPeriodInterestCalcualtion(false)
-                    .disallowExpectedDisbursements(false)
-                    .allowApprovedDisbursedAmountsOverApplied(false)
-                    .overAppliedNumber(null)
-                    .overAppliedCalculationType(null)
-                    .multiDisburseLoan(null);
+                    .rescheduleStrategyMethod(RescheduleStrategyMethod.ADJUST_LAST_UNPAID_PERIOD).isInterestRecalculationEnabled(true)
+                    .recalculationRestFrequencyInterval(1).recalculationRestFrequencyType(RecalculationRestFrequencyType.DAILY)
+                    .rescheduleStrategyMethod(RescheduleStrategyMethod.REDUCE_EMI_AMOUNT).allowPartialPeriodInterestCalcualtion(false)
+                    .disallowExpectedDisbursements(false).allowApprovedDisbursedAmountsOverApplied(false).overAppliedNumber(null)
+                    .overAppliedCalculationType(null).multiDisburseLoan(null);
 
             PostLoanProductsResponse loanProductResponse = loanProductHelper.createLoanProduct(product);
             Long loanProductId = loanProductResponse.getResourceId();
 
             // Create Collateral Product and associate with secured client
             Integer collateralProductId = CollateralManagementHelper.createCollateralProduct(requestSpec, responseSpec);
-            Integer clientCollateralId = CollateralManagementHelper.createClientCollateral(requestSpec, responseSpec, 
-                securedClientId.toString(), collateralProductId);
+            Integer clientCollateralId = CollateralManagementHelper.createClientCollateral(requestSpec, responseSpec,
+                    securedClientId.toString(), collateralProductId);
 
             // Apply and Approve Loans
-            PostLoansRequest securedLoanApplication = applyLoanRequest(securedClientId, loanProductId, "01 January 2023", amount, numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .interestRatePerPeriod(BigDecimal.valueOf(10.0))
-                    .loanTermFrequency(numberOfRepayments)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .interestType(InterestType.DECLINING_BALANCE)
+            PostLoansRequest securedLoanApplication = applyLoanRequest(securedClientId, loanProductId, "01 January 2023", amount,
+                    numberOfRepayments).repaymentEvery(repaymentEvery).interestRatePerPeriod(BigDecimal.valueOf(10.0))
+                    .loanTermFrequency(numberOfRepayments).repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
+                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS).interestType(InterestType.DECLINING_BALANCE)
                     .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY);
 
-            PostLoansRequest unsecuredLoanApplication = applyLoanRequest(unsecuredClientId, loanProductId, "01 January 2023", amount, numberOfRepayments)
-                    .repaymentEvery(repaymentEvery)
-                    .interestRatePerPeriod(BigDecimal.valueOf(10.0))
-                    .loanTermFrequency(numberOfRepayments)
-                    .repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS)
-                    .interestType(InterestType.DECLINING_BALANCE)
+            PostLoansRequest unsecuredLoanApplication = applyLoanRequest(unsecuredClientId, loanProductId, "01 January 2023", amount,
+                    numberOfRepayments).repaymentEvery(repaymentEvery).interestRatePerPeriod(BigDecimal.valueOf(10.0))
+                    .loanTermFrequency(numberOfRepayments).repaymentFrequencyType(RepaymentFrequencyType.MONTHS)
+                    .loanTermFrequencyType(RepaymentFrequencyType.MONTHS).interestType(InterestType.DECLINING_BALANCE)
                     .interestCalculationPeriodType(InterestCalculationPeriodType.DAILY);
 
             PostLoansResponse securedLoanResponse = loanTransactionHelper.applyLoan(securedLoanApplication);
@@ -569,7 +523,8 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
             // Associate collateral with the secured loan only
             String loanCollateralUrl = "/fineract-provider/api/v1/loans/" + securedLoanIdValue + "/collaterals";
             String loanCollateralJson = CollateralManagementHelper.clientCollateralAsJson(clientCollateralId, BigDecimal.valueOf(100));
-            Utils.performServerPost(requestSpec, responseSpec, loanCollateralUrl + "?" + Utils.TENANT_IDENTIFIER, loanCollateralJson, "resourceId");
+            Utils.performServerPost(requestSpec, responseSpec, loanCollateralUrl + "?" + Utils.TENANT_IDENTIFIER, loanCollateralJson,
+                    "resourceId");
 
             // Disburse both loans
             disburseLoan(securedLoanIdValue, BigDecimal.valueOf(amount), "01 January 2023");
@@ -580,20 +535,19 @@ public class LoanApiIntegrationTest extends BaseLoanIntegrationTest {
             // Test without secured parameter - should return all loans (backward compatibility)
             String loansUrl = "/fineract-provider/api/v1/loans?" + Utils.TENANT_IDENTIFIER;
             String jsonResponse = Utils.performServerGet(requestSpec, responseSpec, loansUrl, "");
-            
+
             // Parse response to verify all loans are returned
             Gson gson = new Gson();
             GetLoansResponse allLoansResponse = gson.fromJson(jsonResponse, GetLoansResponse.class);
-            
+
             assertThat(allLoansResponse.getPageItems()).isNotNull();
             assertThat(allLoansResponse.getPageItems()).hasSizeGreaterThanOrEqualTo(2);
-            
+
             // Verify both loan IDs are present in the response
-            boolean securedLoanFound = allLoansResponse.getPageItems().stream()
-                    .anyMatch(loan -> loan.getId().equals(securedLoanId.get()));
+            boolean securedLoanFound = allLoansResponse.getPageItems().stream().anyMatch(loan -> loan.getId().equals(securedLoanId.get()));
             boolean unsecuredLoanFound = allLoansResponse.getPageItems().stream()
                     .anyMatch(loan -> loan.getId().equals(unsecuredLoanId.get()));
-            
+
             assertThat(securedLoanFound).isTrue();
             assertThat(unsecuredLoanFound).isTrue();
         });
