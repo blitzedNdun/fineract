@@ -53,20 +53,36 @@ public abstract class AbstractAuditableWithUTCDateTimeCustom<T extends Serializa
     private static final long serialVersionUID = 141481953116476081L;
 
     @Column(name = CREATED_BY_DB_FIELD, updatable = false, nullable = false)
-    @Setter(onMethod_ = @Override)
     private Long createdBy;
 
     @Column(name = CREATED_DATE_DB_FIELD, updatable = false, nullable = false)
-    @Setter(onMethod_ = @Override)
     private OffsetDateTime createdDate;
 
     @Column(name = LAST_MODIFIED_BY_DB_FIELD, nullable = false)
-    @Setter(onMethod_ = @Override)
     private Long lastModifiedBy;
 
     @Column(name = LAST_MODIFIED_DATE_DB_FIELD, nullable = false)
-    @Setter(onMethod_ = @Override)
     private OffsetDateTime lastModifiedDate;
+
+    @Override
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public void setCreatedDate(OffsetDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    @Override
+    public void setLastModifiedBy(Long lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    @Override
+    public void setLastModifiedDate(OffsetDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
     @Override
     @NotNull
