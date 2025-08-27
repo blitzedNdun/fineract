@@ -28,3 +28,155 @@ components:
 security:
   - basicAuth: []
     tenantid: []
+paths:
+  /v1/loans:
+    get:
+      tags:
+        - Loans
+      summary: Retrieve all loans
+      description: |-
+        Retrieves the list of loans based on various filter criteria.
+        
+        The secured parameter enables filtering loans based on collateral existence:
+        - secured=true: Returns only loans that have associated collateral records
+        - secured=false: Returns only loans that have no associated collateral records  
+        - No secured parameter: Returns all loans matching other criteria (backward compatible)
+      operationId: retrieveAll22
+      parameters:
+        - name: sqlSearch
+          in: query
+          description: SQL search query
+          required: false
+          schema:
+            type: string
+        - name: externalId
+          in: query
+          description: External ID filter
+          required: false
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: Offset for pagination
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: limit
+          in: query
+          description: Limit for pagination
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: orderBy
+          in: query
+          description: Sort order field
+          required: false
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          description: Sort direction (ASC or DESC)
+          required: false
+          schema:
+            type: string
+            enum: [ASC, DESC]
+        - name: accountNo
+          in: query
+          description: Loan account number filter
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Loan status filter
+          required: false
+          schema:
+            type: string
+        - name: secured
+          in: query
+          description: |-
+            Filter loans based on collateral existence:
+            - true: Returns only loans with associated collateral records
+            - false: Returns only loans without any collateral records
+            - If omitted, no filtering is applied (all loans returned)
+          required: false
+          schema:
+            type: boolean
+          examples:
+            secured_loans:
+              summary: Get only secured loans
+              value: true
+              description: Returns loans that have at least one collateral record
+            unsecured_loans:
+              summary: Get only unsecured loans  
+              value: false
+              description: Returns loans that have no collateral records
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalFilteredRecords:
+                    type: integer
+                    format: int32
+                  pageItems:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        accountNo:
+                          type: string
+                        externalId:
+                          type: string
+                        clientId:
+                          type: integer
+                          format: int64
+                        clientName:
+                          type: string
+                        productId:
+                          type: integer
+                          format: int64
+                        productName:
+                          type: string
+                        principal:
+                          type: number
+                        approvedPrincipal:
+                          type: number
+                        proposedPrincipal:
+                          type: number
+                        status:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int32
+                            code:
+                              type: string
+                            value:
+                              type: string
+                        loanType:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              format: int32
+                            code:
+                              type: string
+                            value:
+                              type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
